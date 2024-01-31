@@ -1,6 +1,3 @@
-"""
-    Ejemplo del manejo de hilos
-"""
 
 import requests
 import time
