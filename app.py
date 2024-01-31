@@ -6,7 +6,7 @@ import requests
 import time
 import csv
 import threading
-# librería de python que permite ejecutar comandos
+
 import subprocess
 
 def obtener_data():
@@ -15,14 +15,24 @@ def obtener_data():
         lineas = csv.reader(archivo, quotechar="|")
         for row in lineas:
             # pass
-            # lista.append((numero, pagina))
+            lista.append(lista.append(row[0].split("|")[1]))
     # se retorna la lista con la información que se necesita
     return lista
 
-def worker(numero, url):
-    print("Iniciando %s %s" % (threading.current_thread().getName(), url ))
-    # pass
-    time.sleep(10)
+def worker(url):
+    print("Iniciando %s %s" % (threading.current_thread().getName(), url))
+    # Obtener el contenido de la URL
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Escribir el contenido en un archivo de texto
+        url2=url.replace('https://', '').replace('www.', '').replace('es.wikipedia.org/wiki/', '')
+        print(url2)
+        with open(f"salida/"+url2+".txt", "w", encoding='utf-8') as file:
+            file.write(response.text)
+        print(f"Contenido de {url} guardado en archivo")
+    else:
+        print(f"No se pudo obtener el contenido de {url}")
+
     print("Finalizando %s" % (threading.current_thread().getName()))
 
 for c in obtener_data():
@@ -32,5 +42,5 @@ for c in obtener_data():
     url = c[1]
     hilo1 = threading.Thread(name='navegando...',
                             target=worker,
-                            args=(numero, url))
+                            args=(c,))
     hilo1.start()
